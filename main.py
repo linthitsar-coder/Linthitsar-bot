@@ -1,4 +1,21 @@
+from flask import Flask
 import telebot
+import threading
+
+
+
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=8080)
+
+# Web server ကို background မှာ စတင်ရန်
+threading.Thread(target=run_web).start()
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 TOKEN = '8986301041:AAGN0UntBI7OkJNQoGZERn4xSmoq1U-bdYU' # မိမိ၏ Bot Token ကို ဒီမှာ ထည့်ပါ
