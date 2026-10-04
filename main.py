@@ -1,8 +1,8 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-TOKEN = '8986301041:AAGNOUntBI70kJNQo...' # မိမိ၏ Bot Token ကို ဒီမှာ ထည့်ပါ
-bot = telebot.TeleBot(TOKEN)
+TOKEN = '8986301041:AAGN0UntBI7OkJNQoGZERn4xSmoq1U-bdYU' # မိမိ၏ Bot Token ကို ဒီမှာ ထည့်ပါ
+telebotbot = .TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def main_menu(message):
