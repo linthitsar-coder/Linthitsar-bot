@@ -45,7 +45,29 @@ if not TOKEN:
     )
 
 
+# =========================
+# Admin ID
+# =========================
+
+ADMIN_ID = os.environ.get("ADMIN_ID")
+
+if not ADMIN_ID:
+    raise ValueError(
+        "ADMIN_ID မတွေ့ပါ။ Render Environment မှာ ADMIN_ID ထည့်ပါ။"
+    )
+
+ADMIN_ID = int(ADMIN_ID)
+
+
 bot = telebot.TeleBot(TOKEN)
+
+
+# =========================
+# Admin Check
+# =========================
+
+def is_admin(user_id):
+    return user_id == ADMIN_ID
 
 
 # =========================
@@ -69,6 +91,16 @@ def main_menu(message):
 
     markup.add(btn1, btn2)
 
+    # Admin ဖြစ်ရင် Admin Panel Button ထည့်မယ်
+    if is_admin(message.from_user.id):
+
+        admin_btn = InlineKeyboardButton(
+            "👑 Admin Panel",
+            callback_data="admin_panel"
+        )
+
+        markup.add(admin_btn)
+
     bot.send_message(
         message.chat.id,
         "မင်္ဂလာပါ 👋\n\n"
@@ -86,6 +118,61 @@ def handle_query(call):
 
     bot.answer_callback_query(call.id)
 
+
+    # =========================
+    # ADMIN PANEL
+    # =========================
+
+    if call.data == "admin_panel":
+
+        # Admin ဟုတ်/မဟုတ် ထပ်စစ်မယ်
+        if not is_admin(call.from_user.id):
+
+            bot.send_message(
+                call.message.chat.id,
+                "⛔ Admin ခွင့်ပြုချက်မရှိပါ။"
+            )
+
+            return
+
+        admin_markup = InlineKeyboardMarkup(row_width=1)
+
+        user_btn = InlineKeyboardButton(
+            "👥 User Management",
+            callback_data="admin_users"
+        )
+
+        stats_btn = InlineKeyboardButton(
+            "📊 Statistics",
+            callback_data="admin_stats"
+        )
+
+        broadcast_btn = InlineKeyboardButton(
+            "📢 Broadcast",
+            callback_data="admin_broadcast"
+        )
+
+        admin_markup.add(
+            user_btn,
+            stats_btn,
+            broadcast_btn
+        )
+
+        bot.send_message(
+            call.message.chat.id,
+            "👑 Admin Panel\n\n"
+            "ကြိုဆိုပါတယ် Admin။\n"
+            "အောက်ပါ Menu မှ ရွေးချယ်ပါ။",
+            reply_markup=admin_markup
+        )
+
+        return
+
+
+    # =========================
+    # COURSES
+    # =========================
+
     if call.data == "courses":
 
         bot.send_message(
@@ -97,7 +184,14 @@ def handle_query(call):
             "📱 Telegram Private Channel"
         )
 
-    elif call.data == "contact":
+        return
+
+
+    # =========================
+    # CONTACT
+    # =========================
+
+    if call.data == "contact":
 
         bot.send_message(
             call.message.chat.id,
@@ -105,6 +199,54 @@ def handle_query(call):
             "Viber / Telegram\n"
             "09-981236668"
         )
+
+        return
+
+
+    # =========================
+    # FUTURE ADMIN FEATURES
+    # =========================
+
+    if call.data == "admin_users":
+
+        if not is_admin(call.from_user.id):
+            return
+
+        bot.send_message(
+            call.message.chat.id,
+            "👥 User Management\n\n"
+            "ဒီ Feature ကို Database ထည့်ပြီးနောက် တည်ဆောက်ပါမယ်။"
+        )
+
+        return
+
+
+    if call.data == "admin_stats":
+
+        if not is_admin(call.from_user.id):
+            return
+
+        bot.send_message(
+            call.message.chat.id,
+            "📊 Statistics\n\n"
+            "ဒီ Feature ကို Database ထည့်ပြီးနောက် တည်ဆောက်ပါမယ်။"
+        )
+
+        return
+
+
+    if call.data == "admin_broadcast":
+
+        if not is_admin(call.from_user.id):
+            return
+
+        bot.send_message(
+            call.message.chat.id,
+            "📢 Broadcast\n\n"
+            "ဒီ Feature ကို User Database တည်ဆောက်ပြီးနောက် ထည့်ပါမယ်။"
+        )
+
+        return
 
 
 # =========================
